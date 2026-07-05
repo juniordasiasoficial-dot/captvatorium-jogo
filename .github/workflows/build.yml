@@ -18,7 +18,7 @@ jobs:
       - name: Instalar Node.js
         uses: actions/setup-node@v4
         with:
-          node-node-version: '20'
+          node-version: '22'
 
       - name: Instalar o Cordova
         run: npm install -g cordova
@@ -33,4 +33,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: jogo-captvatorium-apk
-          path: platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk
+          path: platforms/android/app/build/outputs/apk/**/*.apk
+
+
