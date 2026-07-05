@@ -11,3 +11,5 @@
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
 </widget>
+<icon src="www/capa.jpg" />
+
