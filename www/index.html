@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Captvatorium Universe - Caça-Palavras Premium</title>
+    <style>
+        :root {
+            --card-bg: rgba(22, 26, 29, 0.92);
+            --blood-red: #a4161a;
+            --light-red: #e5383b;
+            --gold: #ba963e;
+            --text-light: #f5f3f4;
+            --avatar-skin: #5c4033;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            overscroll-behavior: none !important;
+            overscroll-behavior-y: none !important;
+        }
+
+        html, body {
+            width: 100% !important;
+            height: 100% !important;
+            max-width: 100% !important;
+            max-height: 100% !important;
+            overflow: hidden !important;
+            background-color: #0b090a !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overscroll-behavior: none !important;
+            overscroll-behavior-y: none !important;
+            position: fixed !important;
+        }
+
+        body {
+            color: var(--text-light);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-container {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            z-index: 999999 !important;
+            display: flex;
+            flex-direction: column;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: background-image 0.5s ease-in-out;
+            pointer-events: auto !important;
+            overscroll-behavior: none !important;
+        }
+
+        .main-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(180deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0.75) 100%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        header, .game-panel, footer {
+            position: relative;
+            z-index: 2;
+        }
+
+        .start-screen {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #0b090a;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 40px 20px;
+            z-index: 2000;
+        }
+
+        .start-screen::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.8) 100%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .start-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            width: 100%;
+            max-width: 340px;
+            margin-top: 20px;
+        }
+
+        .start-title {
+            font-family: 'Georgia', 'Times New Roman', Times, serif;
+            font-size: 28px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0px 2px 4px rgba(164, 22, 26, 0.8));
+        }
+
+        .start-subtitle {
+            font-family: 'Georgia', 'Times New Roman', Times, serif;
+            font-size: 14px;
+            color: #e5383b;
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            font-weight: bold;
+            margin-top: 8px;
+            border-top: 1px solid rgba(186, 150, 62, 0.3);
+            border-bottom: 1px solid rgba(186, 150, 62, 0.3);
+            padding: 4px 0;
+            display: inline-block;
+            width: 80%;
+        }
+
+        .menu-buttons {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 85%;
+            max-width: 280px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .btn-enter {
+            background: linear-gradient(180deg, var(--light-red) 0%, var(--blood-red) 100%);
+            color: white;
+            padding: 16px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border: 2px solid var(--gold);
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(164, 22, 26, 0.6);
+            width: 100%;
+        }
+
+        .btn-continue {
+            background: linear-gradient(180deg, var(--gold) 0%, #947225 100%);
+            color: #000;
+            padding: 16px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border: 2px solid #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(186, 150, 62, 0.5);
+            width: 100%;
+            display: none;
+        }
+
+        header {
+            width: 100%;
+            padding: 12px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.6);
+            border-bottom: 2px solid var(--blood-red);
+            backdrop-filter: blur(4px);
+        }
+
+        header h1 {
+            font-size: 22px;
+            color: var(--light-red);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .game-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            overflow: hidden;
+        }
+
+        .word-bank {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+            background: rgba(11, 9, 10, 0.85);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(164, 22, 26, 0.4);
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 360px;
+            backdrop-filter: blur(4px);
+        }
+
+        .word-item {
+            font-size: 14px;
+            font-weight: bold;
+            padding: 5px 12px;
+            border-radius: 4px;
+            background-color: #2b2d42;
+            color: var(--text-light);
+            text-transform: uppercase;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .word-item.found {
+            background-color: var(--blood-red);
+            text-decoration: line-through;
+            opacity: 0.5;
+        }
+
+        .grid-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 4px;
+            width: 100%;
+            max-width: 350px;
+            aspect-ratio: 1/1;
+            background-color: rgba(0, 0, 0, 0.75);
+            padding: 8px;
+            border-radius: 10px;
+            border: 2px solid var(--blood-red);
+            touch-action: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+            backdrop-filter: blur(3px);
+        }
+
+        .grid * {
+            pointer-events: none;
+        }
+
+        .cell {
+            background-color: rgba(20, 20, 20, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+            font-weight: 900;
+            color: var(--text-light);
+            border-radius: 4px;
+            text-transform: uppercase;
+            text-shadow: 1px 1px 2px #000;
+        }
+
+        .cell.selecting {
+            background-color: var(--gold) !important;
+            color: #000 !important;
+            text-shadow: none;
+        }
+
+        .cell.found-cell {
+            background-color: var(--blood-red);
+            color: white;
+        }
+
+        .story-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.88);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            padding: 20px;
+            display: none;
+            backdrop-filter: blur(8px);
+        }
+
+        .story-popup {
+            background-color: var(--card-bg);
+            border: 2px solid var(--gold);
+            border-radius: 12px;
+            padding: 25px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 15px;
+            box-shadow: 0 0 25px rgba(186, 150, 62, 0.2);
+        }
+
+        .author-container {
+            width: 60px;
+            height: 110px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            scale: 0.8;
+        }
+
+        .author-head {
+            width: 40px; height: 40px;
+            background-color: var(--avatar-skin);
+            border-radius: 50%; position: relative; z-index: 3;
+        }
+        .author-head::before {
+            content: ''; position: absolute; top: -2px; left: 0; width: 40px; height: 18px;
+            background-color: #111; border-radius: 20px 20px 0 0;
+        }
+        .author-head::after {
+            content: ''; position: absolute; top: 5px; right: -6px; width: 12px; height: 12px;
+            background-color: #111; border-radius: 50%;
+        }
+
+        .author-eyes {
+            position: absolute; top: 18px; left: 8px; width: 24px;
+            display: flex; justify-content: space-between;
+        }
+        .author-eyes::before, .author-eyes::after {
+            content: ''; width: 5px; height: 5px;
+            background-color: #fff; border-radius: 50%;
+            background-image: radial-gradient(circle, #000 1px, transparent 1px);
+        }
+
+        .author-body {
+            width: 50px; height: 60px; background-color: #111;
+            border-radius: 6px 6px 0 0; position: relative; margin-top: -4px; z-index: 2;
+        }
+        .author-body::before {
+            content: ''; position: absolute; top: 0; left: 17px; width: 16px; height: 20px;
+            background-color: #fff; clip-path: polygon(0 0, 100% 0, 50% 100%);
+        }
+        .author-body::after {
+            content: ''; position: absolute; top: 0; left: 22px; width: 6px; height: 35px;
+            background-color: var(--blood-red); clip-path: polygon(30% 0, 70% 0, 100% 80%, 50% 100%, 0 80%);
+        }
+
+        .author-legs {
+            width: 44px; height: 35px; display: flex; justify-content: space-between; z-index: 1;
+        }
+        .author-legs::before, .author-legs::after {
+            content: ''; width: 18px; height: 100%; background-color: #111; border-radius: 0 0 2px 2px;
+        }
+
+        .author-book {
+            width: 32px; height: 18px; background-color: #f5f3f4; border: 1px solid var(--gold);
+            position: absolute; top: 55px; z-index: 4; border-radius: 2px; display: flex;
+        }
+        .author-book::before, .author-book::after {
+            content: ''; flex: 1; border-right: 1px solid #ccc;
+            background-image: linear-gradient(rgba(0,0,0,0.15) 1px, transparent 1px); background-size: 100% 4px;
+        }
+
+        .story-popup p {
+            font-size: 16px;
+            line-height: 1.5;
+            color: #e0e0e0;
+            text-align: justify;
+            max-height: 160px;
+            overflow-y: scroll !important; /* Força a barra de rolagem vertical */
+            -webkit-overflow-scrolling: touch !important; /* Suaviza a rolagem no WebView do Android */
+            padding-right: 6px;
+            width: 100%;
+        }
+
+        .btn-start {
+            background: linear-gradient(180deg, var(--gold) 0%, #947225 100%);
+            color: #000;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            text-transform: uppercase;
+        }
+
+        footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(11, 9, 10, 0.85);
+            padding: 10px 20px;
+            border-top: 2px solid var(--blood-red);
+            width: 100%;
+            height: 65px;
+            backdrop-filter: blur(4px);
+        }
+
+        .info-box {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .compass-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .compass {
+            width: 45px;
+            height: 45px;
+            border: 2px solid var(--gold);
+            border-radius: 50%;
+            position: relative;
+            background: radial-gradient(circle, #222 0%, #000 100%);
+        }
+
+        .compass-pointer {
+            width: 4px;
+            height: 20px;
+            background-color: var(--light-red);
+            position: absolute;
+            top: 2px;
+            left: 19px;
+            transform-origin: bottom center;
+            transition: transform 0.6s ease-out;
+        }
+
+        .modal {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 3000;
+            display: none;
+        }
+
+        .modal-content {
+            background-color: #161a1d;
+            border: 2px solid var(--gold);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.6);
+        }
+
+        .modal-content h2 {
+            color: var(--gold);
+            font-size: 22px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .modal-content p {
+            font-size: 15px;
+            line-height: 1.5;
+            color: #d3d3d3;
+        }
+
+        .modal-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .cta-button {
+            display: block;
+            background: linear-gradient(180deg, var(--light-red) 0%, var(--blood-red) 100%);
+            color: white;
+            padding: 14px 20px;
+            font-size: 15px;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 6px;
+            border: 1px solid var(--gold);
+            text-transform: uppercase;
+        }
+
+        .restart-button {
+            display: block;
+            background: #2b2d42;
+            color: var(--text-light);
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            border: 1px solid #444;
+            border-radius: 6px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        body > *:not(#main-game-container):not(script), 
+        html > *:not(head):not(body) {
+            display: none !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+            position: absolute !important;
+            top: -9999px !important;
+            left: -9999px !important;
+            z-index: -99999 !important;
+            width: 0px !important;
+            height: 0px !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container" id="main-game-container">
+        <div class="start-screen" id="start-screen">
+            <div class="start-content">
+                <h1 class="start-title">Captvatorium</h1>
+                <div class="start-subtitle">Caça-Palavras</div>
+            </div>
+            <div class="menu-buttons">
+                <button class="btn-continue" id="btn-continue" onclick="continueGame()">Continuar</button>
+                <button class="btn-enter" onclick="newGame()">Novo Jogo</button>
+            </div>
+        </div>
+
+        <header>
+            <h1 id="header-title">Fase 1</h1>
+        </header>
+
+        <div class="game-panel">
+            <div class="word-bank" id="word-bank"></div>
+            <div class="grid-wrapper">
+                <div class="grid" id="game-grid"></div>
+            </div>
+        </div>
+
+        <div class="story-overlay" id="story-overlay">
+            <div class="story-popup">
+                <div class="author-container">
+                    <div class="author-head"><div class="author-eyes"></div></div>
+                    <div class="author-body"></div>
+                    <div class="author-legs"></div>
+                    <div class="author-book"></div>
+                </div>
+                <h3 style="color: var(--gold);">O Autor Conta:</h3>
+                <p id="popup-text">Carregando...</p>
+                <button class="btn-start" onclick="closeStory()">Buscar Palavras</button>
+            </div>
+        </div>
+
+        <footer>
+            <div class="info-box">
+                <span id="display-phase">Fase: 1 / 10</span>
+                <span id="display-score" style="color: var(--gold);">Palavras: 0/0</span>
+            </div>
+            <div class="compass-area">
+                <div class="compass">
+                    <div class="compass-pointer" id="compass-pointer"></div>
+                </div>
+            </div>
+        </footer>
+
+        <div class="modal" id="final-modal">
+            <div class="modal-content">
+                <h2>A Rota Está Completa!</h2>
+                <p>Você moveu o ponteiro até o Norte exato. Isac acaba de cruzar os portões do temido hotel colonial e desvendar os segredos interdimensionais!</p>
+                <p style="color: var(--gold); font-weight: bold;">Descubra toda a verdade em "Captvatorium Universe", do autor Valdiran Cirilo Junior, disponível no Kindle!</p>
+                
+                <div class="modal-actions">
+                    <a href="https://a.co/d/018P2mqN" target="_blank" class="cta-button">Adquirir na Amazon</a>
+                    <button class="restart-button" onclick="restartGame()">Jogar Novamente</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ANTIDOTO DE RELOAD MODIFICADO (LIBERA O POPUP-TEXT) */
+        window.addEventListener('touchmove', function(e) {
+            // Se o toque vier de dentro do texto da história, PERMITA a rolagem nativa
+            if (e.target.id === 'popup-text' || e.target.closest('#popup-text')) {
+                return; 
+            }
+            // Para o resto do app inteiro, bloqueia o arrastar e o pull-to-refresh
+            if (e.cancelable) e.preventDefault();
+        }, { passive: false });
+
+        document.addEventListener('touchmove', function(e) {
+            if (e.target.id === 'popup-text' || e.target.closest('#popup-text')) {
+                return;
+            }
+            if (e.cancelable) e.preventDefault();
+        }, { passive: false });
+
+        function secureNuclearClean() {
+            document.documentElement.removeAttribute('style');
+            document.body.removeAttribute('style');
+            if(document.documentElement.className !== "") document.documentElement.className = "";
+            const children = Array.from(document.body.children);
+            children.forEach(node => {
+                if (node.id !== 'main-game-container' && node.tagName !== 'SCRIPT') {
+                    try { node.remove(); } catch(e) { node.style.display = 'none'; }
+                }
+            });
+        }
+
+        const nuclearObserver = new MutationObserver(() => { secureNuclearClean(); });
+        nuclearObserver.observe(document.documentElement, { childList: true, subtree: true, attributes: true });
+        setInterval(secureNuclearClean, 200);
+        window.addEventListener('DOMContentLoaded', secureNuclearClean);
+
+        const phasesData = [
+            { text: "Os acontecimentos a seguir foram contados por um garoto de 8 anos de idade que esteve em coma por dois anos após ter reaparecido depois de ter sumido misteriosamente na floresta que ficava à vista da janela de sua casa quando tinha 6 anos. Isac é o seu nome.", words: ["ISAC", "COMA", "FLORESTA"], image: "borda.jpg", angle: 180 },
+            { text: "Uma criança inocente brincava em sua mente usando a magia da visão magnífica de uma floresta que ficava um pouco ao longe de sua casa. Os bisões pastavam preguiçosamente pelo lindo campo, iluminado pelos raios solares que passavam por entre as árvores.", words: ["INOCENTE", "BISOES", "CAMPO"], image: "bisoes.jpg", angle: 160 },
+            { text: "Isadora, a mãe de Isac, Isla, sua irmã, e Ismael, seu irmão, seguiam à risca a ordem de não ultrapassar a cerca. Até que um dia Isac acaba atravessando o campo de bisões e adentrando a floresta além da cerca em busca de uma gata de olhos azuis.", words: ["MAE", "CERCA", "GATA"], image: "borda.jpg", angle: 140 },
+            { text: "Então, ele escuta a voz de uma moça na frente dele, dizendo: 'Olá! Trata-se da gata, antes um animal, agora uma mulher que se transforma de um animal a uma figura humanoide, com traços do próprio animal incomum. Esta era Hellena.", words: ["HELLENA", "ANIMAL", "MULHER"], image: "metamorfose.jpg", angle: 120 },
+            { text: "Chorando, Isac diz: 'Tenho saudade, mamãe! Tenho saudade, papai!'. Num grito muito desesperado, demonstrando o sofrimento angustiante de uma criança perdida num mundo onde coisas estranhas acontecem, numa floresta escura.", words: ["SAUDADE", "CHORANDO", "MUNDO"], image: "floresta.jpg", angle: 100 },
+            { text: "Na mata isolada, Isac acorda e depara-se com Jimmy, um homem de cabelos loiros, com um corte tradicional, usando óculos de grau transparente, um casaco de couro um tanto moderno para a época de Isac. Ele usava calças jeans americanas.", words: ["JIMMY", "OCULOS", "CASACO"], image: "jimmy.jpg", angle: 80 },
+            { text: "De repente, um lugar com luzes elétricas, muitas janelas, uma construção nunca vista antes por ninguém da época de Isac. Então o garoto se assustou ao chegar e ver aquele imenso lugar construído como ele nem tinha noção. 'O que é isso?', perguntou Isac.", words: ["LUZES", "JANELAS", "IMENSO"], image: "jack.jpg", angle: 60 },
+            { text: "Eles chegam diante de um imenso e misterioso hotel em estilo colonial no meio do nada. Jimmy reveals o terrível segredo sobre o tempo e o espaço: eles cruzaram para outra dimensão!", words: ["HOTEL", "COLONIAL", "DIMENSAO"], image: "hotel.jpg", angle: 40 },
+            { text: "Dançando sob a luz misteriosa e os ecos do passado, as fingerprints daquele lugar pareciam flutuar no tempo. Cada movimento contava a história esquecida de almas presas num labirinto cósmico.", words: ["DANCANDO", "PASSADO", "ALMAS"], image: "danca.jpg", angle: 20 },
+            { text: "À frente deles, um portal interdimensional pulsava em tons de energia pura. Atravessar significaria deixar tudo para trás e aceitar as regras cósmicas do multiverso.", words: ["PORTAL", "ENERGIA", "REGRAS"], image: "portal.jpg", angle: 0 }
+        ];
+
+        let currentPhaseIndex = 0;
+        let foundWords = [];
+        let selectingCells = [];
+        let isDrawing = false;
+        let cellsMapping = [];
+
+        const gridElement = document.getElementById('game-grid');
+        const wordBankElement = document.getElementById('word-bank');
+        const pointerElement = document.getElementById('compass-pointer');
+        const containerElement = document.getElementById('main-game-container');
+        const startScreenElement = document.getElementById('start-screen');
+        const btnContinue = document.getElementById('btn-continue');
+
+        function checkSavedProgress() {
+            const savedPhase = localStorage.getItem('captvatorium_saved_phase');
+            startScreenElement.style.backgroundPosition = "center";
+            startScreenElement.style.backgroundSize = "cover";
+            startScreenElement.style.backgroundRepeat = "no-repeat";
+
+            if (savedPhase !== null) {
+                const phaseIdx = parseInt(savedPhase);
+                if (phaseIdx > 0 && phaseIdx < phasesData.length) {
+                    startScreenElement.style.backgroundColor = "transparent";
+                    startScreenElement.style.backgroundImage = "url('salaodohotel.jpg')";
+                    btnContinue.style.display = 'block';
+                    return;
+                }
+            }
+            startScreenElement.style.backgroundColor = "transparent";
+            startScreenElement.style.backgroundImage = "url('capa.jpg')";
+            btnContinue.style.display = 'none';
+        }
+
+        window.addEventListener('DOMContentLoaded', checkSavedProgress);
+
+        function newGame() {
+            localStorage.removeItem('captvatorium_saved_phase');
+            startScreenElement.style.display = 'none';
+            initPhase(0);
+        }
+
+        function continueGame() {
+            const savedPhase = localStorage.getItem('captvatorium_saved_phase');
+            startScreenElement.style.display = 'none';
+            if (savedPhase !== null) {
+                initPhase(parseInt(savedPhase));
+            } else {
+                initPhase(0);
+            }
+        }
+
+        function restartGame() {
+            localStorage.removeItem('captvatorium_saved_phase');
+            document.getElementById('final-modal').style.display = 'none';
+            checkSavedProgress();
+            startScreenElement.style.display = 'flex';
+        }
+
+        function initPhase(index) {
+            if (index >= phasesData.length) {
+                localStorage.removeItem('captvatorium_saved_phase');
+                document.getElementById('final-modal').style.display = 'flex';
+                return;
+            }
+
+            currentPhaseIndex = index;
+            localStorage.setItem('captvatorium_saved_phase', index);
+
+            foundWords = [];
+            selectingCells = [];
+            isDrawing = false;
+            
+            const currentPhase = phasesData[index];
+            containerElement.style.backgroundImage = `url('${currentPhase.image}')`;
+            
+            document.getElementById('header-title').innerText = `Fase ${index + 1}`;
+            const popupTextEl = document.getElementById('popup-text');
+            
+            // GARANTE QUE COMECE DO ZERO (TOPO ABSOLUTO DA PROGRAMAÇÃO)
+            popupTextEl.innerText = currentPhase.text;
+            popupTextEl.scrollTop = 0;
+
+            document.getElementById('display-phase').innerText = `Fase: ${index + 1} / ${phasesData.length}`;
+            document.getElementById('display-score').innerText = `Palavras: 0 / ${currentPhase.words.length}`;
+            
+            pointerElement.style.transform = `rotate(${currentPhase.angle}deg)`;
+            document.getElementById('story-overlay').style.display = 'flex';
+
+            wordBankElement.innerHTML = '';
+            currentPhase.words.forEach(word => {
+                const span = document.createElement('span');
+                span.classList.add('word-item');
+                span.innerText = word;
+                span.id = `word-${word}`;
+                wordBankElement.appendChild(span);
+            });
+
+            generateGrid(currentPhase.words);
+            setTimeout(updateCellsGeometricMapping, 150);
+        }
+
+        function closeStory() {
+            document.getElementById('story-overlay').style.display = 'none';
+            setTimeout(updateCellsGeometricMapping, 50);
+        }
+
+        function generateGrid(words) {
+            const size = 10;
+            let matrix = [];
+            let allPlaced = false;
+
+            while (!allPlaced) {
+                matrix = Array(size).fill(null).map(() => Array(size).fill(''));
+                allPlaced = true;
+
+                for (let idx = 0; idx < words.length; idx++) {
+                    const word = words[idx];
+                    let placed = false;
+                    let attempts = 0;
+                    
+                    const dirs = ['H', 'V', 'D'];
+                    const direction = dirs[Math.floor(Math.random() * dirs.length)];
+
+                    while (!placed && attempts < 200) {
+                        attempts++;
+                        let row = Math.floor(Math.random() * size);
+                        let col = Math.floor(Math.random() * size);
+
+                        if (direction === 'H' && col + word.length > size) continue;
+                        if (direction === 'V' && row + word.length > size) continue;
+                        if (direction === 'D' && (row + word.length > size || col + word.length > size)) continue;
+
+                        let canPlace = true;
+                        for (let i = 0; i < word.length; i++) {
+                            let r = row + (direction === 'V' || direction === 'D' ? i : 0);
+                            let c = col + (direction === 'H' || direction === 'D' ? i : 0);
+                            if (matrix[r][c] !== '' && matrix[r][c] !== word[i]) {
+                                canPlace = false;
+                                break;
+                            }
+                        }
+
+                        if (canPlace) {
+                            for (let i = 0; i < word.length; i++) {
+                                let r = row + (direction === 'V' || direction === 'D' ? i : 0);
+                                let c = col + (direction === 'H' || direction === 'D' ? i : 0);
+                                matrix[r][c] = word[i];
+                            }
+                            placed = true;
+                        }
+                    }
+
+                    if (!placed) {
+                        allPlaced = false;
+                        break;
+                    }
+                }
+            }
+
+            const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            gridElement.innerHTML = '';
+            for (let r = 0; r < size; r++) {
+                for (let c = 0; c < size; c++) {
+                    if (matrix[r][c] === '') {
+                        matrix[r][c] = alphabet[Math.floor(Math.random() * alphabet.length)];
+                    }
+                    
+                    const cellDiv = document.createElement('div');
+                    cellDiv.classList.add('cell');
+                    cellDiv.innerText = matrix[r][c];
+                    cellDiv.setAttribute('data-row', r);
+                    cellDiv.setAttribute('data-col', c);
+                    gridElement.appendChild(cellDiv);
+                }
+            }
+        }
+
+        function updateCellsGeometricMapping() {
+            cellsMapping = [];
+            const cells = gridElement.querySelectorAll('.cell');
+            cells.forEach(cell => {
+                const rect = cell.getBoundingClientRect();
+                cellsMapping.push({
+                    element: cell,
+                    left: rect.left,
+                    top: rect.top,
+                    right: rect.right,
+                    bottom: rect.bottom,
+                    row: parseInt(cell.getAttribute('data-row')),
+                    col: parseInt(cell.getAttribute('data-col'))
+                });
+            });
+        }
+
+        window.addEventListener('resize', updateCellsGeometricMapping);
+        window.addEventListener('scroll', updateCellsGeometricMapping);
+
+        function handleTouchStart(e) {
+            updateCellsGeometricMapping(); 
+            isDrawing = true;
+            clearSelection();
+            processElementAtTouch(e.touches[0].clientX, e.touches[0].clientY);
+        }
+
+        function handleTouchMove(e) {
+            if (!isDrawing) return;
+            if (e.cancelable) e.preventDefault();
+            processElementAtTouch(e.touches[0].clientX, e.touches[0].clientY);
+        }
+
+        function handleTouchEnd() {
+            if (!isDrawing) return;
+            isDrawing = false;
+            checkSelectedWord();
+        }
+
+        function processElementAtTouch(clientX, clientY) {
+            let element = null;
+            for (let i = 0; i < cellsMapping.length; i++) {
+                const box = cellsMapping[i];
+                if (clientX >= box.left && clientX <= box.right && clientY >= box.top && clientY <= box.bottom) {
+                    element = box.element;
+                    break;
+                }
+            }
+
+            if (!element) return;
+
+            if (selectingCells.length > 1 && element === selectingCells[selectingCells.length - 2]) {
+                const removedCell = selectingCells.pop();
+                removedCell.classList.remove('selecting');
+                return;
+            }
+
+            if (selectingCells.length === 0) {
+                selectingCells.push(element);
+                element.classList.add('selecting');
+            } else {
+                const lastSelectedCell = selectingCells[selectingCells.length - 1];
+                if (element === lastSelectedCell) return;
+
+                const prevRow = parseInt(lastSelectedCell.getAttribute('data-row'));
+                const prevCol = parseInt(lastSelectedCell.getAttribute('data-col'));
+                const currRow = parseInt(element.getAttribute('data-row'));
+                const currCol = parseInt(element.getAttribute('data-col'));
+
+                const dRow = currRow - prevRow;
+                const dCol = currCol - prevCol;
+
+                if (Math.abs(dRow) <= 1 && Math.abs(dCol) <= 1) {
+                    if (!selectingCells.includes(element)) {
+                        if (selectingCells.length >= 2) {
+                            const firstRow = parseInt(selectingCells[0].getAttribute('data-row'));
+                            const firstCol = parseInt(selectingCells[0].getAttribute('data-col'));
+                            const secondRow = parseInt(selectingCells[1].getAttribute('data-row'));
+                            const secondCol = parseInt(selectingCells[1].getAttribute('data-col'));
+                            
+                            const vectorRow = secondRow - firstRow;
+                            const vectorCol = secondCol - firstCol;
+
+                            const expectedRow = prevRow + vectorRow;
+                            const expectedCol = prevCol + vectorCol;
+
+                            if (currRow === expectedRow && currCol === expectedCol) {
+                                selectingCells.push(element);
+                                element.classList.add('selecting');
+                            }
+                        } else {
+                            selectingCells.push(element);
+                            element.classList.add('selecting');
+                        }
+                    }
+                }
+            }
+        }
+
+        function clearSelection() {
+            selectingCells.forEach(cell => cell.classList.remove('selecting'));
+            selectingCells = [];
+        }
+
+        function checkSelectedWord() {
+            const constructedWord = selectingCells.map(cell => cell.innerText).join('').toUpperCase();
+            const reversedWord = constructedWord.split('').reverse().join('');
+            const currentWords = phasesData[currentPhaseIndex].words;
+
+            let matchIndex = -1;
+            if (currentWords.includes(constructedWord)) {
+                matchIndex = currentWords.indexOf(constructedWord);
+            } else if (currentWords.includes(reversedWord)) {
+                matchIndex = currentWords.indexOf(reversedWord);
+            }
+
+            if (matchIndex !== -1) {
+                const targetWord = currentWords[matchIndex];
+
+                if (!foundWords.includes(targetWord)) {
+                    foundWords.push(targetWord);
+                    selectingCells.forEach(cell => {
+                        cell.classList.remove('selecting');
+                        cell.classList.add('found-cell');
+                    });
+                    document.getElementById(`word-${targetWord}`).classList.add('found');
+                    document.getElementById('display-score').innerText = `Palavras: ${foundWords.length} / ${currentWords.length}`;
+
+                    if (foundWords.length === currentWords.length) {
+                        setTimeout(() => {
+                            initPhase(currentPhaseIndex + 1);
+                        }, 1200);
+                    }
+                } else {
+                    clearSelection();
+                }
+            } else {
+                clearSelection();
+            }
+        }
+
+        gridElement.addEventListener('touchstart', handleTouchStart, { passive: false });
+        gridElement.addEventListener('touchmove', handleTouchMove, { passive: false });
+        gridElement.addEventListener('touchend', handleTouchEnd);
+    </script>
+</body>
+</html>

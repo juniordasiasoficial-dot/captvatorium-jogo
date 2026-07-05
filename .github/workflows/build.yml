@@ -1,0 +1,36 @@
+name: Build APK de Graca
+on: [push]
+
+jobs:
+  android-build:
+    name: Criar APK Puro
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar Codigo do Projeto
+        uses: actions/checkout@v4
+
+      - name: Instalar o Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-node-version: '20'
+
+      - name: Instalar o Cordova
+        run: npm install -g cordova
+
+      - name: Adicionar Plataforma Android
+        run: cordova platform add android
+
+      - name: Compilar APK Limpo
+        run: cordova build android --release
+
+      - name: Guardar o APK para Baixar
+        uses: actions/upload-artifact@v4
+        with:
+          name: jogo-captvatorium-apk
+          path: platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk
